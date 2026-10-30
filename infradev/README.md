@@ -8,8 +8,19 @@ Servidor e documentação: [infradev-solutions/infradev-remote](https://github.c
 - Servidor de ID e relay: `remote.infradevsolutions.com.br`
 - Chave pública do servidor embutida (o app só conversa com o servidor da InfraDev)
 - Servidor de API (login e catálogo de endereços): `http://remote.infradevsolutions.com.br:21114`
+- Ícones e logos da InfraDev (Windows, macOS, Linux, Android e dentro do app)
+- Nome **InfraDev Remote** no Android, no menu do Linux, nas propriedades do .exe e nos textos do app
 
-Tudo fica em [branding.env](branding.env). O script [apply-branding.sh](apply-branding.sh) aplica as
+O nome interno continua "RustDesk" (serviço do Windows, pastas de configuração, link `rustdesk://`).
+Trocar isso exigiria renomear serviços e instaladores em todas as plataformas, com risco de quebrar
+instalação e atualização.
+
+## Trocar o ícone
+
+Coloque um PNG de 1024x1024 com fundo transparente em `source/icone.png` e rode
+`python3 infradev/gerar-icones.py` (precisa do Pillow). Os arquivos gerados ficam em `assets/`.
+
+Servidor, chave e nome ficam em [branding.env](branding.env). O script [apply-branding.sh](apply-branding.sh) aplica as
 trocas no código durante o build, então o resto do fork continua igual ao RustDesk e fica fácil
 puxar atualizações (botão **Sync fork** no GitHub).
 
