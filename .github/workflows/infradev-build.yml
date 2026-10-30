@@ -5,6 +5,11 @@ name: InfraDev Remote - gerar instaladores
 on:
   workflow_dispatch:
 
+# O flutter-build.yml tem jobs que publicam a release (contents: write).
+# Em forks o token padrão costuma ser só leitura, e sem isso o workflow nem inicia.
+permissions:
+  contents: write
+
 jobs:
   build:
     uses: ./.github/workflows/flutter-build.yml
