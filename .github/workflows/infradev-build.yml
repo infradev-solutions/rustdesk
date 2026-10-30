@@ -1,0 +1,14 @@
+name: InfraDev Remote - gerar instaladores
+
+# Rode manualmente em Actions → "InfraDev Remote - gerar instaladores" → Run workflow.
+# Os instaladores saem na release "infradev" deste repositório.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/flutter-build.yml
+    secrets: inherit
+    with:
+      upload-artifact: true
+      upload-tag: "infradev"
