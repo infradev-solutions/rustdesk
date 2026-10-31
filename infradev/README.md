@@ -10,6 +10,9 @@ Servidor e documentação: [infradev-solutions/infradev-remote](https://github.c
 - Servidor de API (login e catálogo de endereços): `http://remote.infradevsolutions.com.br:21114`
 - Ícones e logos da InfraDev (Windows, macOS, Linux, Android e dentro do app)
 - Nome **InfraDev Remote** no Android, no menu do Linux, nas propriedades do .exe e nos textos do app
+- Links do site apontam para infradevsolutions.com.br, e o de download aponta para a release deste fork
+- O app não procura atualização do RustDesk oficial, que trocaria o app por uma versão sem a marca e sem o servidor
+- Instaladores publicados como `infradev-remote-*` (o build gera `rustdesk-*`, e um job no final renomeia)
 
 O nome interno continua "RustDesk" (serviço do Windows, pastas de configuração, link `rustdesk://`).
 Trocar isso exigiria renomear serviços e instaladores em todas as plataformas, com risco de quebrar
