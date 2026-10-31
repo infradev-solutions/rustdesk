@@ -63,6 +63,30 @@ replace_once flutter/windows/runner/Runner.rc '"ProductName", "RustDesk"' "\"Pro
 # Linux: nome no menu de aplicativos
 replace_once res/rustdesk.desktop 'Name=RustDesk' "Name=${INFRADEV_APP_NAME}"
 
+# Troca todas as ocorrências de um texto exato nos arquivos Dart; falha se não achar nenhuma.
+replace_all_dart() {
+  local files
+  files=$(grep -rlF --include='*.dart' -- "$1" "$ROOT/flutter/lib" | grep -v '/web/' || true)
+  [ -n "$files" ] || { echo "InfraDev: texto não encontrado no Flutter: $1" >&2; exit 1; }
+  for f in $files; do
+    OLD="$1" NEW="$2" perl -0pi -e 's/\Q$ENV{OLD}\E/$ENV{NEW}/g' "$f"
+  done
+}
+
+# Links do site e de download apontam para a InfraDev.
+# O aviso de privacidade e a documentação técnica continuam apontando para o RustDesk.
+replace_all_dart "https://rustdesk.com/download" "${INFRADEV_DOWNLOAD}"
+replace_all_dart "'https://rustdesk.com'" "'${INFRADEV_SITE}'"
+replace_all_dart "'https://rustdesk.com/'" "'${INFRADEV_SITE}'"
+replace_all_dart "Text('rustdesk.com'" "Text('${INFRADEV_SITE_LABEL}'"
+
+# Não procurar atualização do RustDesk oficial: ela trocaria o app por uma versão
+# sem a marca e sem o servidor da InfraDev. Atualizações vêm deste fork.
+replace_once src/common.rs 'pub fn check_software_update() {' 'pub fn check_software_update() {
+    if true {
+        return;
+    }'
+
 echo "InfraDev: marca visual aplicada (${INFRADEV_APP_NAME})."
 
 echo "InfraDev: servidor ${INFRADEV_HOST} e chave embutidos."
