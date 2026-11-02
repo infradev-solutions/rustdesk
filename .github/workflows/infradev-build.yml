@@ -17,3 +17,32 @@ jobs:
     with:
       upload-artifact: true
       upload-tag: "infradev"
+
+  # Renomeia os instaladores de "rustdesk-*" para "infradev-remote-*" na release.
+  # Roda mesmo se algum build falhar, para renomear o que ficou pronto.
+  renomear-instaladores:
+    needs: build
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Renomear arquivos da release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          assets=$(gh api "repos/$REPO/releases/tags/infradev" --jq '.assets[] | "\(.id)\t\(.name)"')
+          echo "$assets" | while IFS=$'\t' read -r id name; do
+            case "$name" in
+              rustdesk-*)
+                new="infradev-remote-${name#rustdesk-}"
+                # Remove a versão antiga com o mesmo nome, se houver (build anterior).
+                old_id=$(echo "$assets" | awk -F'\t' -v n="$new" '$2 == n {print $1}')
+                if [ -n "$old_id" ]; then
+                  gh api -X DELETE "repos/$REPO/releases/assets/$old_id"
+                fi
+                gh api -X PATCH "repos/$REPO/releases/assets/$id" -f name="$new" > /dev/null
+                echo "$name -> $new"
+                ;;
+            esac
+          done
