@@ -46,3 +46,33 @@ jobs:
                 ;;
             esac
           done
+
+  # Copia os instaladores para a release "instaladores" do repositório infradev-remote.
+  # Precisa do secret INFRADEV_REMOTE_TOKEN (token com permissão de escrita em Contents
+  # no infradev-remote). Sem o secret, este passo é pulado e os arquivos ficam só neste fork.
+  publicar-no-infradev-remote:
+    needs: renomear-instaladores
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publicar instaladores no infradev-remote
+        env:
+          GH_TOKEN: ${{ secrets.INFRADEV_REMOTE_TOKEN }}
+          ORIGEM: ${{ github.repository }}
+          DESTINO: infradev-solutions/infradev-remote
+          TAG: instaladores
+        run: |
+          set -euo pipefail
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::Secret INFRADEV_REMOTE_TOKEN não configurado; instaladores ficam só na release deste fork."
+            exit 0
+          fi
+          mkdir -p arquivos
+          # A release do fork é pública, então dá para baixar com o token do infradev-remote.
+          gh release download infradev -R "$ORIGEM" -p 'infradev-remote-*' -D arquivos
+          ls -lh arquivos
+          if ! gh release view "$TAG" -R "$DESTINO" > /dev/null 2>&1; then
+            gh release create "$TAG" -R "$DESTINO" --title "InfraDev Remote - instaladores" \
+              --notes "Instaladores do InfraDev Remote, já configurados para remote.infradevsolutions.com.br. Gerados automaticamente a partir de $ORIGEM."
+          fi
+          gh release upload "$TAG" -R "$DESTINO" --clobber arquivos/*
