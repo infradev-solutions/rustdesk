@@ -31,7 +31,19 @@ puxar atualizações (botão **Sync fork** no GitHub).
 
 1. Aba **Actions** → se pedir, clique em **I understand my workflows, go ahead and enable them**.
 2. Escolha **InfraDev Remote - gerar instaladores** → **Run workflow**.
-3. Ao terminar (pode levar mais de uma hora), os arquivos ficam em **Releases → infradev**.
+3. Ao terminar (pode levar mais de uma hora), os arquivos ficam em **Releases → infradev** deste fork
+   e, se o secret `INFRADEV_REMOTE_TOKEN` estiver configurado, também em
+   [infradev-remote → Releases → instaladores](https://github.com/infradev-solutions/infradev-remote/releases/tag/instaladores).
+
+Use sempre **Run workflow**. O **Re-run** de uma execução antiga usa o código daquela data.
+
+### Configurar o INFRADEV_REMOTE_TOKEN (uma vez só)
+
+1. GitHub → foto do perfil → **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+2. *Repository access*: **Only select repositories** → `infradev-remote`.
+3. *Permissions → Repository permissions → Contents*: **Read and write**. Validade: a maior possível.
+4. Copie o token. Neste fork: **Settings → Secrets and variables → Actions → New repository secret**,
+   nome `INFRADEV_REMOTE_TOKEN`, cole o token.
 
 Os instaladores não são assinados digitalmente: o Windows SmartScreen e o macOS vão avisar na
 primeira execução. iOS não é gerado (exige conta de desenvolvedor Apple).
