@@ -16,8 +16,6 @@ Servidor e documentação: [infradev-solutions/infradev-remote](https://github.c
 
 No Windows o nome interno é "InfraDevRemote" (`INFRADEV_INTERNAL_NAME` em `branding.env`): pasta `C:\Program Files\InfraDevRemote`, atalhos, serviço, `.exe` instalado, `%AppData%\InfraDevRemote` e o MSI.
 Nos outros sistemas o nome interno continua "RustDesk" por enquanto.
-Trocar isso exigiria renomear serviços e instaladores em todas as plataformas, com risco de quebrar
-instalação e atualização.
 
 ## Trocar o ícone
 
