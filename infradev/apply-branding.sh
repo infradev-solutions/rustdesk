@@ -22,6 +22,17 @@ grep -q "RENDEZVOUS_SERVERS: &\[&str\] = &\[\"${INFRADEV_HOST}\"\];" "$CONFIG" \
 grep -qF "RS_PUB_KEY: &str = \"${INFRADEV_KEY}\";" "$CONFIG" \
   || { echo "InfraDev: não consegui embutir a chave em $CONFIG" >&2; exit 1; }
 
+# Nome interno no Windows (pasta de instalação, atalhos, serviço, .exe, %AppData%).
+# Nos outros sistemas continua "RustDesk" por enquanto.
+replace_app_name() {
+  OLD='pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());' \
+  NEW="pub static ref APP_NAME: RwLock<String> = RwLock::new(if cfg!(windows) { \"${INFRADEV_INTERNAL_NAME}\" } else { \"RustDesk\" }.to_owned());" \
+    perl -0pi -e 's/\Q$ENV{OLD}\E/$ENV{NEW}/' "$CONFIG"
+  grep -qF "\"${INFRADEV_INTERNAL_NAME}\" } else" "$CONFIG" \
+    || { echo "InfraDev: não consegui trocar o nome interno em $CONFIG" >&2; exit 1; }
+}
+replace_app_name
+
 # Servidor de API (login e catálogo de endereços): sem isso o app usaria o admin.rustdesk.com.
 COMMON="$ROOT/src/common.rs"
 sed -i.bak \
