@@ -441,7 +441,11 @@ jobs:
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
+          # InfraDev: o instalador copia o .exe com o nome que ele tem aqui e depois procura {nome interno}.exe.
+          infradev_name=$(sed -n 's/^INFRADEV_INTERNAL_NAME=//p' ../../infradev/branding.env | tr -d '"\r')
+          mv ../../rustdesk/rustdesk.exe "../../rustdesk/$infradev_name.exe"
+          python3 ./generate.py -f ../../rustdesk/ -o . -e "../../rustdesk/$infradev_name.exe"
+          mv "../../rustdesk/$infradev_name.exe" ../../rustdesk/rustdesk.exe
           popd
           mkdir -p ./SignOutput
           mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
@@ -714,7 +718,11 @@ jobs:
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../Release/ -o . -e ../../Release/rustdesk.exe
+          # InfraDev: o instalador copia o .exe com o nome que ele tem aqui e depois procura {nome interno}.exe.
+          infradev_name=$(sed -n 's/^INFRADEV_INTERNAL_NAME=//p' ../../infradev/branding.env | tr -d '"\r')
+          mv ../../Release/rustdesk.exe "../../Release/$infradev_name.exe"
+          python3 ./generate.py -f ../../Release/ -o . -e "../../Release/$infradev_name.exe"
+          mv "../../Release/$infradev_name.exe" ../../Release/rustdesk.exe
           popd
           mkdir -p ./SignOutput
           mv ./target/release/rustdesk-portable-packer.exe ./SignOutput/rustdesk-${{ env.VERSION }}-${{ matrix.job.arch }}-sciter.exe
